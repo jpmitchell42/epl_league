@@ -6,3 +6,16 @@ class SoccerTeam(models.Model):
 
   def __str__(self) -> str:
     return f"{self.team_name} {self.city}"
+
+class Fixture(models.Model):
+  home_team = models.ForeignKey(SoccerTeam ,on_delete=models.DO_NOTHING, related_name="home_team")
+  away_team = models.ForeignKey(SoccerTeam, on_delete=models.DO_NOTHING, related_name="away_team")
+  game_date = models.DateField()
+  gameweek = models.IntegerField()
+
+class GameLine(models.Model):
+  fixture = models.ForeignKey(Fixture, on_delete=models.DO_NOTHING)
+  home = models.IntegerField()
+  away = models.IntegerField()
+  tie = models.IntegerField()
+  pulled_on = models.DateTimeField()
