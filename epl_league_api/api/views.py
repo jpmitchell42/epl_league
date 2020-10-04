@@ -34,20 +34,10 @@ class SoccerTeamViewSet(viewsets.ModelViewSet):
 class FixtureViewSet(viewsets.ModelViewSet):
     queryset = Fixture.objects.all()
     serializer_class = FixtureSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    permissions.IsAuthenticated
 
 class GameLineViewSet(viewsets.ModelViewSet):
     queryset = GameLine.objects.all()
     serializer_class = GameLineSerialzer
-
-# class Fixture(models.Model):
-#   home_team = models.ForeignKey(SoccerTeam)
-#   away_team = models.ForeignKey(SoccerTeam)
-#   game_date = models.DateField()
-#   gameweek = models.IntegerField()
-
-# class GameLines(models.Model):
-#   fixture = models.ForeignKey(Fixture)
-#   home = models.IntegerField()
-#   away = models.IntegerField()
-#   tie = models.IntegerField()
-#   pulled_on = models.DateTimeField()
+    permission_classes = [permissions.IsAuthenticated]
