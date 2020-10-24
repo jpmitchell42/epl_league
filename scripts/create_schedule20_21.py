@@ -30,7 +30,6 @@ def run():
             if away_team is None or home_team is None:
               raise TeamNonExistant
             datetime_object = datetime.datetime.strptime(gamedate, '%a %b %d %Y').date()
-            new_fix = Fixture(home_team=home_team, away_team=away_team, game_date=datetime_object, gameweek=gw)
-            new_fix.save()
+            new_fix = Fixture.objects.get_or_create(home_team=home_team, away_team=away_team, game_date=datetime_object, gameweek=gw)
 
       print(Fixture.objects.all().count())
