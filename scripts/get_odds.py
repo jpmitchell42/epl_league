@@ -45,7 +45,3 @@ From July 2020, outrights are a valid market for sports with has_outrights: true
 dateFormat   Optional - Determines the format of timestamps in the response. Valid values are unix and iso (ISO 8601). Defaults to unix.
 oddsFormat   Optional - Determines the format of odds in the response. Valid values are decimal and american. Defaults to decimal. When set to american, small discrepancies might exist for some bookmakers due to rounding errors.
 """
-
-if __name__ == "__main__":
-    pdb.set_trace()
-    print("james")
