@@ -29,15 +29,15 @@ class SoccerTeamViewSet(viewsets.ModelViewSet):
     """
     queryset = SoccerTeam.objects.all()
     serializer_class = SoccerTeamSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 class FixtureViewSet(viewsets.ModelViewSet):
     queryset = Fixture.objects.all()
     serializer_class = FixtureSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    permissions.IsAuthenticated
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 class GameLineViewSet(viewsets.ModelViewSet):
     queryset = GameLine.objects.all()
     serializer_class = GameLineSerialzer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
