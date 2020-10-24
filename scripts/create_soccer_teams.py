@@ -14,5 +14,5 @@ def run():
             # row variable is a list that represents a row in csv
             club_name = row[0]
             city = row[1]
-            st = SoccerTeam.objects.create(team_name=club_name, city=city)
+            st = SoccerTeam.objects.get_or_create(team_name=club_name, city=city)
             print(st)
