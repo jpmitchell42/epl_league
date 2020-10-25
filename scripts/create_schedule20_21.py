@@ -23,8 +23,8 @@ def run():
             # row variable is a list that represents a row in csv
             gw = row[0]
             gamedate= row[1]
-            away = row[2].replace(" FC","")
-            home = row[4].replace(" FC","")
+            away = row[4].replace(" FC","")
+            home = row[2].replace(" FC","")
             away_team = SoccerTeam.objects.filter(team_name=away).first()
             home_team = SoccerTeam.objects.filter(team_name=home).first()
             if away_team is None or home_team is None:
