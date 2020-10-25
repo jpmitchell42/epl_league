@@ -13,9 +13,13 @@ class Fixture(models.Model):
   game_date = models.DateField()
   gameweek = models.IntegerField()
 
+  def __str__(self) -> str:
+    return f"{self.home_team} v {self.away_team}, {self.game_date}, gw:{self.gameweek}"
+
 class GameLine(models.Model):
   fixture = models.ForeignKey(Fixture, on_delete=models.DO_NOTHING)
   home = models.IntegerField()
   away = models.IntegerField()
   tie = models.IntegerField()
   pulled_on = models.DateTimeField()
+  odds_source = models.CharField(max_length=50, default="default")
