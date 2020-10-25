@@ -23,3 +23,7 @@ class GameLine(models.Model):
   tie = models.IntegerField()
   pulled_on = models.DateTimeField()
   odds_source = models.CharField(max_length=50, default="default")
+
+  def __str__(self) -> str:
+    gametime = self.fixture.game_date
+    return f"{self.fixture.home_team.team_name} vs {self.fixture.away_team.team_name} on gw:{self.fixture.gameweek} {self.home}/{self.away}/{self.tie} on {gametime}"

@@ -28,17 +28,3 @@ class FixtureSerializer(serializers.ModelSerializer):
     class Meta:
         model = Fixture
         fields = '__all__'
-
-
-# class Fixture(models.Model):
-#   home_team = models.ForeignKey(SoccerTeam)
-#   away_team = models.ForeignKey(SoccerTeam)
-#   game_date = models.DateField()
-#   gameweek = models.IntegerField()
-
-# class GameLines(models.Model):
-#   fixture = models.ForeignKey(Fixture)
-#   home = models.IntegerField()
-#   away = models.IntegerField()
-#   tie = models.IntegerField()
-#   pulled_on = models.DateTimeField()
