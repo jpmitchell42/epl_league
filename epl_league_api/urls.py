@@ -13,5 +13,7 @@ router.register(r'game_lines', views.GameLineViewSet)
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('', include(router.urls)),
+    path('gameweeks/', views.GameWeekApiView.as_view()),
+    path('gameweeks/<int:week>/', views.GameWeekApiView.as_view()),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]

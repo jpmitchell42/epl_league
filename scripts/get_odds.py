@@ -1,39 +1,81 @@
-import pdb, requests, json
+import pdb, requests, json, os, pytz
 from datetime import datetime
 from epl_league_api.api.models import SoccerTeam, GameLine, Fixture
+
+TEAM_MAPPINGS = {
+  "Brighton and Hove Albion" : "Brighton & Hove Albion"
+}
 class ScrapeOdds:
   API_URL = 'https://api.the-odds-api.com/v3/odds'
-  with open("secrets.json") as f:
-    API_KEY = json.load(f)["the_odds_api_key"]
+  API_KEY = os.environ.get("ODDS_API_KEY")
 
   @staticmethod
-  def parse_odd(odds):
-    pdb.set_trace()
-    home_team = odds["home_team"]
-    teams = odds["teams"]
-    away_team = [team for team in odds["teams"] if team not in  [home_team]][0]
-    away_team = teams - home_team
-    available_odds = sorted(odds["sites"], key=lambda site: site["last_update"], reverse=True)
-    most_recent_odds = available_odds[0]
-    home_id = SoccerTeam.objects.all().filter(team_name=home_team)
-    fixy = Fixture.objects.all().filter(home_team=home_team, away_team=away_team)
+  def parse_odds(odds):
+    home_team_raw = odds["home_team"]
+    if home_team_raw in TEAM_MAPPINGS:
+      home_team = TEAM_MAPPINGS[home_team_raw]
+    else:
+      home_team = home_team_raw
+    
+    raw_teams = odds["teams"]
+    teams = [team if team not in TEAM_MAPPINGS else TEAM_MAPPINGS[team] for team in raw_teams]
 
-    start_time = datetime.fromtimestamp(odds["commence_time"])
-    pdb.set_trace()
+    first_team_is_home_team = home_team == teams[0]
+    away_team = teams[1] if first_team_is_home_team else teams[0]
 
+    home_team = SoccerTeam.objects.all().filter(team_name=home_team).first()
+    away_team = SoccerTeam.objects.all().filter(team_name=away_team).first()
 
+    # TODO use date as well or we're fucked for future years
+    possibilities = Fixture.objects.all().filter(home_team=home_team, away_team=away_team)
+    if len(possibilities) != 1:
+      print(f"cant find {home_team} vs {away_team}")
+      raise RuntimeError
+    game = possibilities.first()
+
+    lines = odds["sites"]
+    for site in lines:
+      site_key = site["site_key"]
+      last_update = datetime.fromtimestamp(site["last_update"]).replace(tzinfo=pytz.UTC)
+      line = site["odds"]
+      head_to_head = line.pop("h2h", None)
+      
+      if head_to_head:
+        draw_int = head_to_head[2]
+        
+        if first_team_is_home_team:
+          home_team_int = head_to_head[0]
+          away_team_int = head_to_head[1]
+        else:
+          home_team_int = head_to_head[1]
+          away_team_int = head_to_head[0]
+        
+        existing_line = GameLine.objects.filter(fixture=game, odds_source=site_key, pulled_on=last_update)
+
+        if existing_line.count() == 1:
+          existing_line.update(home=home_team_int, away=away_team_int, pulled_on=last_update)
+        elif existing_line.count() > 1:
+          print("raising runtime error because found multiple eligible gamelines")
+          raise RuntimeError
+        else:
+          new_line = GameLine.objects.create(fixture=game, \
+            odds_source=site_key, \
+            pulled_on=last_update, \
+            home=home_team_int, \
+            away=away_team_int, \
+            tie=draw_int
+          )
+          print(f"created newline: {new_line}")
 
   @staticmethod
   def get_odds_from_api():
     response = requests.get(ScrapeOdds.API_URL, params={'api_key': ScrapeOdds.API_KEY,'sport': 'soccer_epl','region': 'uk','mkt': 'h2h'})
     data = json.loads(response.content)["data"]
-
     for o in data:
-      ScrapeOdds.parse_odd(o)
+      ScrapeOdds.parse_odds(o)
 
 def run():
     ScrapeOdds.get_odds_from_api()
-    pdb.set_trace()
 
 """
 apiKey   An API key is emailed when you sign up to a plan. See here for usage plans
