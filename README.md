@@ -15,14 +15,10 @@ pip3 install -r requirements.txt
 # this creates the tables our models define in a local sqlite database
 python manage.py migrate
 
-# create your secrets file. I've included secrets_example.json 
-# the actual program reads from secrets.json which is in the .gitignore
-cp secrets_example.json secrets.json
-
 # Create a super user for yourself. 
-python mangage.py createsuperuser
+python manage.py createsuperuser
 # choose something simple. You can skip the email field just by pressing enter.
-# This will only work locally. Put your username and password in secrets.json
+# This will only work locally. Put your username and password somewhere so you dont forget
 
 # first lets look at the contents of our dbs. 
 python manage.py runserver
